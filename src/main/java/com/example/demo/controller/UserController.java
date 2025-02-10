@@ -27,9 +27,9 @@ public class UserController {
         return userService.getUserByUsername(username);
     }
 
-    @GetMapping(params = "id")
-    public User getUserById(@RequestParam Long id) {
-        return userService.getUserById(id);
+    @GetMapping(params = "user_id")
+    public User getUserById(@RequestParam Long user_id) {
+        return userService.getUserById(user_id);
     }
     @PostMapping
     public UserResponseDto createUser(@RequestBody UserProfileRequest request) {
