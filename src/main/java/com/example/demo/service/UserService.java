@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.UserProfileRequest;
 import com.example.demo.dto.UserResponseDto;
 import com.example.demo.model.Profile;
@@ -8,8 +9,10 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -17,16 +20,25 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
 
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    // public User getUserById(Long id) {
+    //     return userRepository.findById(id).orElse(null);
+    // }
+
+
+    public ResponseEntity<ApiResponse<?>> getUserById(Long id)  {
+        User user = userRepository.findById(id).orElse(null);
+        ApiResponse<User> response = new ApiResponse<>(
+            true,
+            "Get user by id successfully",
+            null, 
+            user
+        );
+        return ResponseEntity.ok(response);
     }
 
     public User saveUser(User user) {
@@ -72,6 +84,12 @@ public class UserService {
     
         dto.setProfile(profileDto);
         return dto;
+    }
+    public List<UserResponseDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                    .map(this::mapToUserResponseDto)
+                    .collect(Collectors.toList());
     }
     
 }

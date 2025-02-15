@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.UserProfileRequest;
 import com.example.demo.dto.UserResponseDto;
 import com.example.demo.model.User;
@@ -18,7 +19,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserResponseDto>  getAllUsers() {
         return userService.getAllUsers();
     }
 
@@ -26,10 +27,22 @@ public class UserController {
     public User getUserByUsername(@PathVariable String username) {
         return userService.getUserByUsername(username);
     }
-
     @GetMapping(params = "user_id")
-    public User getUserById(@RequestParam Long user_id) {
-        return userService.getUserById(user_id);
+    public ResponseEntity<?> getUserById( Long user_id) {
+        try {
+            if (user_id == null) {
+            throw new IllegalArgumentException("User ID is required");
+            }
+            return userService.getUserById(user_id);
+        } catch (Exception e) {
+            ApiResponse<?> response = new ApiResponse<>(
+            false,
+            e.getMessage(),
+            400,
+            null
+            );
+            return ResponseEntity.badRequest().body(response);
+        }
     }
     @PostMapping
     public UserResponseDto createUser(@RequestBody UserProfileRequest request) {
