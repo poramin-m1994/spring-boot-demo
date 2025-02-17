@@ -85,11 +85,17 @@ public class UserService {
         dto.setProfile(profileDto);
         return dto;
     }
-    public List<UserResponseDto> getAllUsers() {
+    public ResponseEntity<ApiResponse<?>> getAllUsers()  {
         List<User> users = userRepository.findAll();
-        return users.stream()
-                    .map(this::mapToUserResponseDto)
-                    .collect(Collectors.toList());
+        ApiResponse<List<User>> response = new ApiResponse<>(
+            true,
+            "Successfully",
+            null, 
+            users
+        );
+        return ResponseEntity.ok(response);
     }
     
 }
+
+

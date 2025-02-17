@@ -19,9 +19,20 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<UserResponseDto>  getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<?>  getAllUsers() {
+        try {
+            return userService.getAllUsers();
+        } catch (Exception e) {
+            ApiResponse<?> response = new ApiResponse<>(
+            false,
+            e.getMessage(),
+            400,
+            null
+            );
+            return ResponseEntity.badRequest().body(response);
+        }
     }
+
 
     @GetMapping("/{username}")
     public User getUserByUsername(@PathVariable String username) {
